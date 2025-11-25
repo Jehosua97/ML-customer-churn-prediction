@@ -1,64 +1,234 @@
-# Telco-customer-churn-prediction
-A classification machine learning problem for predicting customers churn from the company based on customers who left within the last month labeled by 'yes' or 'no'
+# 📘 Sustainable Telecom Analytics: Modeling E-Waste Impact from Customer Churn Behavior
 
-The dataset used in this project is obtained from [Kaggle - Telco Customer Churn](https://www.kaggle.com/blastchar/telco-customer-churn)\
-The data set includes information about:
-- Customers who left within the last month – the column is called Churn
-- Services that each customer has signed up for – phone, multiple lines, internet, online security, online backup, device protection, tech support, and streaming TV and movies.
-- Customer account information – how long they’ve been a customer, contract, payment method, paperless billing, monthly charges, and total charges
-- Demographic info about customers – gender, age range, and if they have partners and dependents
+**Repository:** *ML-customer-churn-prediction*
+**Authors:**
 
-## Methodology
-At first 20% of the data were splitted for final testing; stratified by the 'Churn' (target) column.
+* **Jehosua Alan Joya Venegas** – MSc Computer Science, Algoma University
+* **Saurodeep Majumdar** – MSc Computer Science, Algoma University
+* **Srushti Dhanani** – BSc Computer Science, Algoma University
 
-## Data cleaning
-* Convert 'TotalCharges' column which is of object type to float type using pd.to_numeric() with errors parameter set to 'coerce' to parse invalid data to NaN.
-* Eight missing values were found in the 'TotalCharges' column and were imputed by the mean() value.
-* Data has no duplicates.
+---
 
-## Exploratory data analysis
-1. Count plot shows the distribution of the churn rate in the data which showed an imbalance in the data.
-2. Categorical features count plot insights:
-    * Data is evenly distributed between the two genders; males and females, which might be useful in further analysis.
-    * No information added by 'No Internet Service' or 'No Phone Service' and 'No' categories.
-    --> **Replacing 'No Internet Service' and 'No Phone Service' entries with 'No'**.
-3. Histogram and box plot of continous features implies that:
-    * No outliers exists.
-    * 'TotalCharges' feature is right skewed.
-4. Scatter plot of 'MonthlyCharges' vs. 'TotalCharges' shows a positive correlation between both and also it affects the Churn rate positively.
+## 📝 Overview
 
-## Feature encoding 
-Several encoding techniques were tested on each categorical feature separately and One-Hot encoding all the categorical features gave the best results.
+This repository contains the full implementation of a machine-learning workflow designed to:
 
-## Feature engineering
-Binning 'tenure' feature into 6 ranges:
-* 0-12 months --> '0-1 years'
-* 12-24 months --> '1-2 years'
-* 24-36 months --> '2-3 years'
-* 36-48 months --> '3-4 years'
-* 48-60 months --> '4-5 years'
-* More than 60 months --> 'more than 5 years'
+1. **Predict telecom customer churn**, and
+2. **Estimate associated electronic-waste (e-waste) generation** using a sustainability-aware model.
 
-## Feature scaling
-log transformation is very powerful in feature scaling specially with skewed data, hence, np.log1p() is applied on 'MonthlyCharges' and 'TotalCharges' features and with trials it proved giving the best results over MinMaxScaler() and StandaredScaler().
+We extend standard churn modeling by linking predicted churn events to environmental impact using the formula:
 
-## Data imbalance
-Data imbalance affects machine learning models by tending only to predict the majority class and ignoting the minority class, hence, having major misclassification of the minority class in comparison with the majority class. Hence, we use techniques to balance class distribution in the data.
+[
+E = \frac{M \times N}{L}
+]
 
-Even that our data here doesn't have severe class imbalance, but handling it shows results improvement.
-Using SMOTE (Synthetic Minority Oversampling Technique) libraray in python that randomly increasing the minority class which is 'yes' in our case.
+Where:
 
-SMOTE synthetically creates new records of the minority class by randomly selecting one or more of the k-nearest neighbors for each example in the minority class. Here, k= 5 neighbors is used. 
+* **M** = device mass (kg),
+* **N** = number of churned customers (assumed one device per customer),
+* **L** = average device lifetime (years).
 
-### Preparing a python function test_prep(dataframe) to combine and apply all previous preprocessing steps on the test data.
-- To handle any expected missing values in the test set, a condition is added inside the function to map the mean value of its column in the train set.
+This project is based on the IBM Telco Customer Churn dataset and incorporates improvements to Logistic Regression alongside comparisons with SVM, XGBoost, and MLP.
 
-## Models training
-Four different models were applied on the data and all results are reported with confusion matrix and classification report showing the precision, recall, and f1-score metrics.
-1. Logistic regression
-Best parameters after several trials: C=200 (very large c value trying to fit the data as possible without overfitting), max_iter=1000
-2. Support vector classifier
-Best prameters: kernel='linear', C=20
-3. XGBoost classifier
-RandomizedSearchCV is used for hyperparameters tuning with StratifiedKFold of 5 splits.
-4. Multi-layer Perceptron (MLP) classifier.
+---
+
+## 📂 Project Structure
+
+```
+├── Dataset/
+│   └── WA_Fn-UseC_-Telco-Customer-Churn.csv
+├── churnModel.py              # Main ML + E-waste analysis pipeline
+├── figures/                   # Recommended place for your plots/screenshots
+├── README.md                  # (this file)
+└── requirements.txt
+```
+
+---
+
+## 🚀 Features
+
+### ✔ Complete Preprocessing Pipeline
+
+* Missing value repair
+* One-hot encoding
+* Log transforms for skewed variables
+* Tenure binning
+* SMOTE oversampling
+
+### ✔ Machine Learning Models
+
+Baseline comparison includes:
+
+* Logistic Regression
+* SVM (Linear)
+* XGBoost
+* MLP Neural Network
+
+### ✔ Logistic Regression Optimization
+
+Improved using:
+
+* **GridSearchCV** for hyperparameters (C, class_weight)
+* **Threshold tuning** (0.10–0.90)
+* **SMOTE-balanced training set**
+
+### ✔ E-Waste Sustainability Analysis
+
+Uses churn predictions to estimate annual e-waste, grounded in Brett Robinson’s ICORD model for global e-waste flows.
+
+### ✔ Contract-Type Environmental Impact
+
+Month-to-month customers produce **80%+ of predicted e-waste**, demonstrating a strong link between subscription structure and sustainability impact.
+
+---
+
+## ⚙️ Installation
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Jehosua97/ML-customer-churn-prediction.git
+cd ML-customer-churn-prediction
+```
+
+### 2. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+If SMOTE causes import errors:
+
+```bash
+pip install imbalanced-learn
+```
+
+---
+
+## ▶️ Running the Model
+
+Use Python to execute the full pipeline including preprocessing, training, evaluation, and e-waste estimation:
+
+```bash
+python churnModel.py
+```
+
+This will generate:
+
+* Classification metrics
+* Confusion matrices
+* Comparison tables
+* E-waste estimates
+* Contract-type churn breakdown
+* Saved figures (if you output them to `figures/`)
+
+---
+
+## 📊 Key Results
+
+### 🔹 Baseline Logistic Regression
+
+* **Accuracy:** 0.80
+* **Churn Recall:** 0.58
+* **Predicted Churners:** 333
+* **Estimated E-Waste:** 53.28 kg/year
+
+### 🔹 Improved Logistic Regression
+
+* **Best C:** 10
+* **Best Threshold:** 0.49
+* **Accuracy:** 0.8062
+* **Churn Recall:** 0.61
+* **Predicted Churners:** 359
+* **Estimated E-Waste:** 57.44 kg/year
+
+### 🔹 Why LR Was Selected
+
+* Most stable performance
+* Best balance of precision & recall
+* Best interpretability
+* Calibrated probability outputs suitable for sustainability modeling
+
+---
+
+## 🌍 Sustainability Layer: E-Waste Formula
+
+We incorporate the ICORD-validated model:
+
+[
+E = \frac{M \times N}{L}
+]
+
+Using:
+
+* **M = 0.8 kg** (router mass)
+* **N = predicted churners**
+* **L = 5 years** (average lifetime)
+
+This allows the ML model to estimate **kg/year of e-waste generated by churn behavior**.
+
+---
+
+## 📎 Where to Place Screenshots / Figures
+
+Please place your output charts here:
+
+```
+/figures/
+```
+
+Include:
+
+* Original churn distribution
+* Tenure vs. churn
+* SMOTE distribution
+* Confusion matrices (original + improved LR)
+* Contract-type churn
+* Contract-type e-waste impact
+* Logistic regression comparison table
+
+---
+
+## ✍️ Citation (IEEE)
+
+If you want others to cite this repo in publications:
+
+```
+J. A. Joya Venegas, S. Majumdar, and S. Dhanani,
+“ML-customer-churn-prediction,” GitHub repository, 2025.
+Available: https://github.com/Jehosua97/ML-customer-churn-prediction
+```
+
+---
+
+## 📚 References
+
+The full academic paper behind this code includes the following sources:
+
+* Nurtriana et al., E3S Web of Conferences, 2024
+* Omari et al., *Frontiers in AI*, 2025
+* Dou, DAML Conference, 2023
+* Saied, GitHub Repository, 2022
+* IBM Telco Churn Dataset, Kaggle
+* Toner Buzz Environmental Studies, 2025
+* Robinson, ICORD E-Waste Assessment, 2011
+* Sawicki, Ontario E-Waste Policy Brief, 2022
+
+---
+
+## 🔮 Future Work
+
+* Introduce device-level variation: ONTs, gateways, mesh systems, modems
+* Track refurbishment or recycling rates
+* Predict remaining useful life (RUL) of equipment
+* Expand sustainability modeling into circular-economy simulation
+
+---
+
+## 📬 Contact
+
+For questions or contributions:
+
+**Jehosua Alan Joya Venegas**
+📧 [joya.jehosua@gmail.com](mailto:joya.jehosua@gmail.com)
+
